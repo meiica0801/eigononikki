@@ -245,8 +245,24 @@ class AppDB extends Dexie {
 
 ### 4.3 Phase 2 / 3 の扱い
 
-- Phase 2（穴埋め）: `## English` の代わりに `## Fill in the blanks` のような見出しが現れる可能性 → **MVP では Phase 1 のみ完全対応、Phase 2/3 は title・topic・mode のみ抽出してリスト表示する**
-- 構造が想定外の場合は、`englishParagraphs` を空配列にし、UI で「このフォーマットは未対応」と表示
+**Phase 2 対応済み（2026-06-24 実装）**
+
+Phase 2 の markdown 構造:
+
+```markdown
+## Fill in the blanks      ← 穴あき本文（fillInBlanksText に格納）
+## Hints (日本語)          ← ヒント（パース対象外、rawMarkdown から参照）
+## Full diary (clean version)  ← クリーン英文 → englishParagraphs に格納（TTS 用）
+## Vocabulary              ← 穴埋め語を中心とした語彙テーブル
+## 日本語訳                ← japaneseParagraphs に格納
+```
+
+- `englishParagraphs`: `## Full diary (clean version)` から抽出（`## English` の代替）
+- `fillInBlanksText?: string[]`: `## Fill in the blanks` から抽出（Phase 2 専用フィールド）
+- `patterns`: 空配列（Phase 2 には `## 写経のポイント` なし）
+- `vocabulary`: 穴埋め語を中心に通常通り抽出
+
+Phase 3（自由作文）: 構造が想定外の場合は `englishParagraphs` を空配列にし、UI で「このフォーマットは未対応」と表示
 
 ### 4.4 パース実装方針
 
